@@ -20,8 +20,11 @@
 # granted to it by virtue of its status as an Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""ORCID integration module."""
+"""
+ORCID integration module.
+"""
 
 from __future__ import absolute_import, division, print_function
 
-from .ext import InspireOrcid  # noqa: F401
+from .converter import OrcidConverter  # noqa: F401
+from .builder import OrcidBuilder  # noqa: F401
