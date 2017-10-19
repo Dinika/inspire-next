@@ -30,15 +30,19 @@ def test_literature_record_external_system_identifiers():
         'external_system_identifiers': [
             {
                 'schema': 'DESY',
-                'value': 'oai:cds.cern.ch:2232052',
+                'value': 'D04-00213',
             },
             {
-                'schema': 'CDS',
-                'value': '2232052',
+                'schema': 'ADS',
+                'value': '2004PrPh...52..200K',
             },
             {
-                'schema': 'CDS',
-                'value': '123456',
+                'schema': 'ADS',
+                'value': '2006PhR...429..121K',
+            },
+            {
+                'schema': 'SPIRES',
+                'value': 'SPIRES-5682037',
             },
         ],
     })
@@ -46,11 +50,15 @@ def test_literature_record_external_system_identifiers():
     expected = [
         {
             'schema': 'DESY',
-            'value': 'oai:cds.cern.ch:2232052',
+            'value': 'D04-00213',
         },
         {
-            'schema': 'CDS',
-            'value': '2232052',
+            'schema': 'ADS',
+            'value': '2004PrPh...52..200K',
+        },
+        {
+            'schema': 'SPIRES',
+            'value': 'SPIRES-5682037',
         },
     ]
     result = record.external_system_identifiers
