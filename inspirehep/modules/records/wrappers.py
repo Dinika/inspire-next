@@ -114,6 +114,24 @@ class LiteratureRecord(ESRecord, AdminToolsMixin):
 
         return pub_info_list
 
+<<<<<<< HEAD
+=======
+    @property
+    def external_system_identifiers(self):
+        """External system identification information.
+
+        Returns a list that contains information on first of each kind of
+        external_system_idenitfiers
+        """
+        ext_sys_id_list = []
+        seen = set()
+        for ext_sys_id in self.get('external_system_identifiers', []):
+            if ext_sys_id['schema'] not in seen:
+                seen.add(ext_sys_id['schema'])
+                ext_sys_id_list.append(ext_sys_id)
+        return ext_sys_id_list
+
+>>>>>>> d9eadc38... theme: manage external system identifiers
 
 class AuthorsRecord(ESRecord, AdminToolsMixin):
     """Record class specialized for author records."""
