@@ -22,12 +22,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-from inspirehep.utils.record_getter import get_es_record
 from inspirehep.modules.orcid import OrcidConverter
 from flask import current_app
 from lxml import etree
 import pkg_resources
 import os
+import json
 
 
 def valid_against_schema(xml):
@@ -49,8 +49,11 @@ def xml_compare(result, expected):
     return True
 
 
-def test_format_article(app):
-    article = get_es_record('lit', 4328)
+def test_format_article(app, api_client):
+    response = api_client.get('/literature/4328/db')
+    assert response.status_code == 200
+    article = json.loads(response.data)
+
     expected = xml_parse("""
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:title>
@@ -82,13 +85,16 @@ def test_format_article(app):
     </work:work>
     """)
 
-    result = OrcidConverter(article).get_xml()
+    result = OrcidConverter(article['metadata'], server_name=current_app.config['SERVER_NAME']).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
-def test_format_conference_paper(app):
-    inproceedings = get_es_record('lit', 524480)
+def test_format_conference_paper(app, api_client):
+    response = api_client.get('/literature/524480/db')
+    assert response.status_code == 200
+    inproceedings = json.loads(response.data)
+    assert inproceedings['metadata']['self_recid'] == 'K'
     expected = xml_parse("""
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:title>
@@ -117,13 +123,16 @@ def test_format_conference_paper(app):
     </work:work>
     """)
 
-    result = OrcidConverter(inproceedings).get_xml()
+    result = OrcidConverter(inproceedings['metadata'], server_name=current_app.config['SERVER_NAME']).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
-def test_format_proceedings(app):
-    proceedings = get_es_record('lit', 701585)
+def test_format_proceedings(app, api_client):
+    response = api_client.get('/literature/701585/db')
+    assert response.status_code == 200
+    proceedings = json.loads(response.data)
+
     expected = xml_parse("""
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:title>
@@ -161,13 +170,16 @@ def test_format_proceedings(app):
     </work:work>
     """)
 
-    result = OrcidConverter(proceedings).get_xml()
+    result = OrcidConverter(proceedings['metadata'], server_name=current_app.config['SERVER_NAME']).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
-def test_format_thesis(app):
-    phdthesis = get_es_record('lit', 1395663)
+def test_format_thesis(app, api_client):
+    response = api_client.get('/literature/1395663/db')
+    assert response.status_code == 200
+    phdthesis = json.loads(response.data)
+
     expected = xml_parse("""
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:title>
@@ -187,13 +199,16 @@ def test_format_thesis(app):
     </work:work>
     """)
 
-    result = OrcidConverter(phdthesis).get_xml()
+    result = OrcidConverter(phdthesis['metadata'], server_name=current_app.config['SERVER_NAME']).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
-def test_format_book(app):
-    book = get_es_record('lit', 736770)
+def test_format_book(app, api_client):
+    response = api_client.get('/literature/736770/db')
+    assert response.status_code == 200
+    book = json.loads(response.data)
+
     expected = xml_parse("""
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:title>
@@ -232,13 +247,16 @@ def test_format_book(app):
     </work:work>
     """)
 
-    result = OrcidConverter(book).get_xml()
+    result = OrcidConverter(book['metadata'], server_name=current_app.config['SERVER_NAME']).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(result, expected)
 
 
-def test_format_book_chapter(app):
-    inbook = get_es_record('lit', 1375491)
+def test_format_book_chapter(app, api_client):
+    response = api_client.get('/literature/1375491/db')
+    assert response.status_code == 200
+    inbook = json.loads(response.data)
+
     expected = xml_parse("""
     <work:work xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work">
         <work:title>
@@ -287,8 +305,8 @@ def test_format_book_chapter(app):
             </work:contributor>
         </work:contributors>
     </work:work>
-    """.format(current_app.config['SERVER_NAME']))
+    """)
 
-    result = OrcidConverter(inbook).get_xml()
+    result = OrcidConverter(inbook['metadata'], server_name=current_app.config['SERVER_NAME']).get_xml()
     assert valid_against_schema(result)
     assert xml_compare(result, expected)

@@ -54,6 +54,7 @@ class OrcidConverter(object):
     # Maps INSPIRE document type to ORCID work types
     # for full list see: https://git.io/vdKXv#L118-L155
     INSPIRE_DOCTYPE_TO_ORCID_TYPE = {
+        'activity report': 'report',
         'article': 'journal-article',
         'book': 'book',
         'book chapter': 'book-chapter',
@@ -64,7 +65,7 @@ class OrcidConverter(object):
         'thesis': 'dissertation',
     }
 
-    def __init__(self, record, put_code=None, visibility=None):
+    def __init__(self, record, put_code=None, visibility=None, server_name=None):
         """Constructor.
 
         Args:
@@ -73,6 +74,7 @@ class OrcidConverter(object):
         self.record = record
         self.put_code = put_code
         self.visibility = visibility
+        self.server_name = server_name
 
     def get_xml(self):
         """Create an ORCID XML representation of the record.
@@ -118,10 +120,9 @@ class OrcidConverter(object):
             builder.add_external_id('isbn', isbn)
 
         # Add URL pointing to INSPIRE to ORCID
-        server_name = current_app.config.get('SERVER_NAME')
-        if not re.match('^https?://', server_name):
-            server_name = 'http://{}'.format(server_name)
-        builder.add_url('{}/record/{}'.format(server_name, self.recid))
+        if not re.match('^https?://', self.server_name):
+            self.server_name = 'http://{}'.format(self.server_name)
+        builder.add_url('{}/record/{}'.format(self.server_name, self.recid))
 
         # Add authors/editors/etc. to the ORCID record
         for author in self.record.get('authors', []):
